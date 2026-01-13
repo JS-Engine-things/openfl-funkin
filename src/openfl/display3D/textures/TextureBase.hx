@@ -84,13 +84,7 @@ class TextureBase extends EventDispatcher
 			{
 				__supportsBGRA = true;
 				__textureFormat = bgraExtension.BGRA_EXT;
-
-				#if (lime && !ios && !tvos)
-				if (context.__context.type == OPENGLES)
-				{
-					__textureInternalFormat = bgraExtension.BGRA_EXT;
-				}
-				#end
+				__textureInternalFormat = bgraExtension.BGRA_EXT;
 			}
 			else
 			{
@@ -369,8 +363,13 @@ class TextureBase extends EventDispatcher
 			gl.texParameteri(__textureTarget, gl.TEXTURE_MAG_FILTER, magFilter);
 			gl.texParameteri(__textureTarget, gl.TEXTURE_WRAP_S, wrapModeS);
 			gl.texParameteri(__textureTarget, gl.TEXTURE_WRAP_T, wrapModeT);
-			gl.texParameterf(__textureTarget, 34049, state.lodBias); // GL_TEXTURE_LOD_BIAS
 
+			#if lime
+			if (__context.__context.type == OPENGL)
+			{
+				gl.texParameterf(__textureTarget, 0x8501, state.lodBias); // GL_TEXTURE_LOD_BIAS
+			}
+			#end
 
 			if (__samplerState == null) __samplerState = state.clone();
 			__samplerState.copyFrom(state);
